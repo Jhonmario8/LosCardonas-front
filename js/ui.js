@@ -16,8 +16,12 @@ function renderShell(activeKey, pageTitle) {
 
   sidebar.innerHTML = `
     <div class="brand">
-      <span class="brand-mark"><i class="bi bi-heart-pulse-fill"></i></span>
-      <span class="brand-text">Los Cardonas</span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.2c-2.1 0-3.5.95-4.6.95-1.15 0-2.1-.65-2.85-.65-.55 0-.95.45-.95 1.05 0 2.15.75 4.2.95 6.4.3 2.35.65 5.75 2.3 7.55.5.55 1.05.5 1.4-.15.75-1.4.95-3.75 1.5-5.3.3-.85.85-1.25 2.25-1.25s1.95.4 2.25 1.25c.55 1.55.75 3.9 1.5 5.3.35.65.9.7 1.4.15 1.65-1.8 2-5.2 2.3-7.55.2-2.2.95-4.25.95-6.4 0-.6-.4-1.05-.95-1.05-.75 0-1.7.65-2.85.65-1.1 0-2.5-.95-4.6-.95Z"/>
+        </svg>
+      </span>
+      <span class="brand-text">DentalCore</span>
     </div>
     <nav class="side-nav">
       ${NAV_ITEMS.map(item => `

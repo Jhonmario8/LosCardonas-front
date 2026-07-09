@@ -3,19 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Los Cardonas · Iniciar sesión</title>
+<title>DentalCore · Iniciar sesión</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Crect%20width%3D%2724%27%20height%3D%2724%27%20rx%3D%276%27%20fill%3D%27%23146C6B%27/%3E%3Cpath%20fill%3D%27%23ffffff%27%20d%3D%27M12%205.1c-1.5%200-2.5.68-3.3.68-.82%200-1.5-.46-2.03-.46-.4%200-.68.32-.68.75%200%201.54.54%203%20.68%204.57.21%201.68.46%204.1%201.64%205.39.36.4.75.36%201-.11.54-1%20.68-2.68%201.07-3.79.21-.6.6-.89%201.61-.89s1.39.29%201.61.89c.39%201.11.54%202.79%201.07%203.79.25.46.64.5%201%20.11%201.18-1.29%201.43-3.71%201.64-5.39.14-1.57.68-3.03.68-4.57%200-.43-.29-.75-.68-.75-.54%200-1.21.46-2.03.46-.79%200-1.79-.68-3.3-.68Z%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/styles.css?v=4">
 </head>
 <body>
 
 <div class="auth-screen">
   <div class="auth-card">
     <div class="auth-brand">
-      <span class="brand-mark"><i class="bi bi-heart-pulse-fill"></i></span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.2c-2.1 0-3.5.95-4.6.95-1.15 0-2.1-.65-2.85-.65-.55 0-.95.45-.95 1.05 0 2.15.75 4.2.95 6.4.3 2.35.65 5.75 2.3 7.55.5.55 1.05.5 1.4-.15.75-1.4.95-3.75 1.5-5.3.3-.85.85-1.25 2.25-1.25s1.95.4 2.25 1.25c.55 1.55.75 3.9 1.5 5.3.35.65.9.7 1.4.15 1.65-1.8 2-5.2 2.3-7.55.2-2.2.95-4.25.95-6.4 0-.6-.4-1.05-.95-1.05-.75 0-1.7.65-2.85.65-1.1 0-2.5-.95-4.6-.95Z"/>
+        </svg>
+      </span>
       <span class="brand-text">DentalCore</span>
     </div>
 
@@ -43,7 +48,7 @@
   </div>
 </div>
 
-<script src="js/api.js?v=3"></script>
+<script src="js/api.js?v=4"></script>
 <script>
   // Si ya hay sesión activa, saltar directo al dashboard.
   if (getToken()) {

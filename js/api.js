@@ -27,7 +27,84 @@ function requireAuth() {
   }
 }
 
-async function apiRequest(path, { method = "GET", body = null, query = null, auth = true } = {}) {
+/* ==========================================================================
+   Mensajes de error legibles
+   Prioridad al armar el mensaje: mapa por contexto+status > mensaje del
+   backend (si trae uno útil) > mensaje genérico por código HTTP.
+   ========================================================================== */
+
+const STATUS_FALLBACK = {
+  400: "Los datos enviados no son válidos. Revisa los campos e intenta de nuevo.",
+  401: "No autorizado. Inicia sesión de nuevo.",
+  403: "No tienes permisos para realizar esta acción.",
+  404: "No se encontró lo que buscabas.",
+  409: "La operación no se pudo completar por un conflicto con los datos existentes.",
+  500: "Ocurrió un error inesperado en el servidor. Intenta de nuevo.",
+};
+
+const CONTEXT_MESSAGES = {
+  login: {
+    400: "Credenciales incorrectas. Verifica tu correo y contraseña.",
+    401: "Credenciales incorrectas. Verifica tu correo y contraseña.",
+  },
+  patients: {
+    404: "No se encontró el paciente.",
+  },
+  patientCreate: {
+    400: "Revisa los datos del paciente: hay campos inválidos o incompletos.",
+    409: "Ya existe un paciente activo con ese teléfono o documento.",
+  },
+  patientUpdate: {
+    400: "Revisa los datos del paciente: hay campos inválidos o incompletos.",
+    404: "No se encontró el paciente que intentas editar.",
+    409: "Ese teléfono o documento ya pertenece a otro paciente activo.",
+  },
+  patientInactivate: {
+    404: "No se encontró el paciente.",
+    409: "Este paciente ya estaba inactivo.",
+  },
+  appointments: {
+    400: "La fecha ingresada no es válida.",
+  },
+  appointmentCreate: {
+    400: "Revisa la fecha, hora o el tratamiento: hay datos inválidos.",
+    404: "El paciente seleccionado no existe o está inactivo.",
+    409: "Ya existe una cita agendada en esa fecha y hora.",
+  },
+  appointmentStatus: {
+    404: "La cita no fue encontrada.",
+    409: "No es posible cambiar la cita a ese estado.",
+  },
+  paymentCreate: {
+    400: "El valor pagado no puede ser mayor al valor del tratamiento, o los datos son inválidos.",
+    404: "La cita asociada a este pago no fue encontrada.",
+  },
+  paymentAmount: {
+    400: "El valor del abono no es válido.",
+    404: "El pago no fue encontrado.",
+  },
+  payments: {
+    404: "No se encontró información de pagos para este paciente.",
+  },
+  paymentTransactions: {
+    404: "No se encontraron abonos para este pago.",
+  },
+  dashboard: {
+    500: "No se pudo generar el resumen del día.",
+  },
+};
+
+function buildErrorMessage(status, context, data) {
+  const contextual = (context && CONTEXT_MESSAGES[context] && CONTEXT_MESSAGES[context][status]) || null;
+  if (contextual) return contextual;
+
+  const backendMsg = data && typeof data === "object" ? (data.message || data.detail) : null;
+  if (backendMsg && typeof backendMsg === "string") return backendMsg;
+
+  return STATUS_FALLBACK[status] || `Ocurrió un error (código ${status}).`;
+}
+
+async function apiRequest(path, { method = "GET", body = null, query = null, auth = true, context = null } = {}) {
   let url = API_BASE_URL + path;
   if (query) {
     const cleaned = Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined && v !== null && v !== ""));
@@ -53,12 +130,16 @@ async function apiRequest(path, { method = "GET", body = null, query = null, aut
     throw new Error("No fue posible conectar con el servidor. Verifica que el backend esté corriendo.");
   }
 
-  if (res.status === 401) {
+  // Sesión expirada/ inválida en una petición que SÍ requería token.
+  // (El login también puede devolver 401, pero por credenciales incorrectas,
+  // no por sesión expirada — por eso solo se maneja aquí cuando auth=true.)
+  if (res.status === 401 && auth) {
     clearToken();
-    if (!window.location.pathname.endsWith("index.html") && window.location.pathname !== "/") {
-      window.location.href = "index.html";
+    const onLoginPage = window.location.pathname.endsWith("index.html") || window.location.pathname === "/";
+    if (!onLoginPage) {
+      setTimeout(() => { window.location.href = "index.html"; }, 1200);
     }
-    throw new Error("Sesión inválida o expirada. Inicia sesión de nuevo.");
+    throw new Error("Tu sesión expiró. Inicia sesión de nuevo.");
   }
 
   const text = await res.text();
@@ -68,8 +149,7 @@ async function apiRequest(path, { method = "GET", body = null, query = null, aut
   }
 
   if (!res.ok) {
-    const message = (data && (data.message || data.error || data.detail)) || `Error ${res.status}`;
-    throw new Error(message);
+    throw new Error(buildErrorMessage(res.status, context, data));
   }
 
   return data;
@@ -78,26 +158,26 @@ async function apiRequest(path, { method = "GET", body = null, query = null, aut
 const Api = {
   // ---- Auth ----
   login: (email, password) =>
-    apiRequest("/users/login", { method: "POST", body: { email, password }, auth: false }),
+    apiRequest("/users/login", { method: "POST", body: { email, password }, auth: false, context: "login" }),
 
   // ---- Pacientes ----
-  getPatients: (name) => apiRequest("/patients", { query: { name } }),
-  createPatient: (patient) => apiRequest("/patients", { method: "POST", body: patient }),
-  updatePatient: (id, patient) => apiRequest(`/patients/${id}`, { method: "PUT", body: patient }),
-  inactivatePatient: (id) => apiRequest(`/patients/${id}/inactivate`, { method: "PATCH" }),
+  getPatients: (name) => apiRequest("/patients", { query: { name }, context: "patients" }),
+  createPatient: (patient) => apiRequest("/patients", { method: "POST", body: patient, context: "patientCreate" }),
+  updatePatient: (id, patient) => apiRequest(`/patients/${id}`, { method: "PUT", body: patient, context: "patientUpdate" }),
+  inactivatePatient: (id) => apiRequest(`/patients/${id}/inactivate`, { method: "PATCH", context: "patientInactivate" }),
 
   // ---- Citas ----
-  getAppointments: (date) => apiRequest("/appointments", { query: { date } }),
-  createAppointment: (appointment) => apiRequest("/appointments", { method: "POST", body: appointment }),
+  getAppointments: (date) => apiRequest("/appointments", { query: { date }, context: "appointments" }),
+  createAppointment: (appointment) => apiRequest("/appointments", { method: "POST", body: appointment, context: "appointmentCreate" }),
   updateAppointmentStatus: (id, status) =>
-    apiRequest(`/appointments/${id}/status`, { method: "PATCH", query: { status } }),
+    apiRequest(`/appointments/${id}/status`, { method: "PATCH", query: { status }, context: "appointmentStatus" }),
 
   // ---- Pagos ----
-  createPayment: (payment) => apiRequest("/payments", { method: "POST", body: payment }),
-  addPaymentAmount: (id, mount) => apiRequest(`/payments/${id}/amount`, { method: "PUT", query: { mount } }),
-  getPaymentsByPatient: (patientId) => apiRequest(`/payments/patient/${patientId}`),
-  getPaymentTransactions: (paymentId) => apiRequest(`/payments/${paymentId}/transactions`),
+  createPayment: (payment) => apiRequest("/payments", { method: "POST", body: payment, context: "paymentCreate" }),
+  addPaymentAmount: (id, mount) => apiRequest(`/payments/${id}/amount`, { method: "PUT", query: { mount }, context: "paymentAmount" }),
+  getPaymentsByPatient: (patientId) => apiRequest(`/payments/patient/${patientId}`, { context: "payments" }),
+  getPaymentTransactions: (paymentId) => apiRequest(`/payments/${paymentId}/transactions`, { context: "paymentTransactions" }),
 
   // ---- Dashboard ----
-  getDashboardSummary: () => apiRequest("/dashboard/summary"),
+  getDashboardSummary: () => apiRequest("/dashboard/summary", { context: "dashboard" }),
 };
