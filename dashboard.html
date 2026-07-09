@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DentalCore · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside id="sidebar"></aside>
+  <div class="main-col">
+    <header id="topbar"></header>
+
+    <div id="loadingState" class="empty-state">
+      <i class="bi bi-hourglass-split"></i>
+      <div class="empty-title">Cargando resumen del día…</div>
+    </div>
+
+    <div id="dashboardContent" style="display:none;">
+      <div class="stat-grid">
+        <div class="card-surface stat-tile">
+          <div class="stat-label">Citas de hoy</div>
+          <div class="stat-value" id="statTotalCitas">0</div>
+        </div>
+        <div class="card-surface stat-tile">
+          <div class="stat-label">Recaudado hoy</div>
+          <div class="stat-value accent" id="statRecaudado">$0</div>
+        </div>
+        <div class="card-surface stat-tile">
+          <div class="stat-label">Citas por estado</div>
+          <div class="status-mini-row" id="statusBreakdown"></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="toolbar">
+          <h2 class="section-title" style="margin-bottom:0;">Agenda de hoy</h2>
+          <a href="agenda.html" class="btn-ghost"><i class="bi bi-calendar3 me-1"></i> Ver agenda completa</a>
+        </div>
+        <div id="quickAgenda"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js?v=3"></script>
+<script src="js/ui.js?v=3"></script>
+<script src="js/dashboard.js?v=3"></script>
+</body>
+</html>

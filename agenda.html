@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DentalCore · Agenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside id="sidebar"></aside>
+  <div class="main-col">
+    <header id="topbar"></header>
+
+    <div class="toolbar">
+      <div class="agenda-date-picker">
+        <button class="icon-btn" id="prevDayBtn" title="Día anterior"><i class="bi bi-chevron-left"></i></button>
+        <input type="date" id="agendaDate">
+        <button class="icon-btn" id="nextDayBtn" title="Día siguiente"><i class="bi bi-chevron-right"></i></button>
+        <button class="btn-ghost" id="todayBtn">Hoy</button>
+      </div>
+      <button class="btn btn-primary-solid" id="newAppointmentBtn"><i class="bi bi-plus-lg me-1"></i> Nueva cita</button>
+    </div>
+
+    <div id="agendaContainer"></div>
+  </div>
+</div>
+
+<!-- Modal Nueva cita -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agendar cita</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="appointmentForm">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="aPatientSearch">Paciente</label>
+              <div class="patient-picker" id="aPatientPicker">
+                <input type="text" class="form-control" id="aPatientSearch" placeholder="Busca por nombre o documento…" autocomplete="off">
+                <input type="hidden" id="aPatient">
+                <div class="patient-picker-results" id="aPatientResults"></div>
+              </div>
+              <div class="patient-picker-selected" id="aPatientSelected">
+                <span id="aPatientSelectedName"></span>
+                <button type="button" class="clear-selection" id="aPatientClear" title="Cambiar paciente">&times;</button>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Fecha</label>
+              <div class="date-select-group" id="aDateGroup"></div>
+              <div class="quick-date-row">
+                <button type="button" class="quick-date-btn" id="quickToday">Hoy</button>
+                <button type="button" class="quick-date-btn" id="quickTomorrow">Mañana</button>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="aTime">Hora</label>
+              <select class="form-select" id="aTime" required></select>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="aTreatment">Tratamiento</label>
+              <input type="text" class="form-control" id="aTreatment" placeholder="Ej. Limpieza, Ortodoncia, Control" required minlength="3" maxlength="100">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary-solid" id="appointmentSaveBtn">Agendar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Registrar pago -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar pago</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="paymentForm">
+        <div class="modal-body">
+          <p class="cell-muted mb-3">Paciente: <strong id="paymentPatientName"></strong> · Tratamiento: <strong id="paymentTreatmentName"></strong></p>
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="payCost">Valor del tratamiento</label>
+              <input type="number" class="form-control" id="payCost" required min="1" step="0.01">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="payAmount">Valor pagado</label>
+              <input type="number" class="form-control" id="payAmount" required min="0" step="0.01">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary-solid" id="paymentSaveBtn">Registrar pago</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js?v=3"></script>
+<script src="js/ui.js?v=3"></script>
+<script src="js/agenda.js?v=3"></script>
+</body>
+</html>

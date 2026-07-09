@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DentalCore · Pacientes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside id="sidebar"></aside>
+  <div class="main-col">
+    <header id="topbar"></header>
+
+    <div class="toolbar">
+      <div class="search-input-wrap">
+        <i class="bi bi-search"></i>
+        <input type="text" id="searchInput" placeholder="Buscar paciente por nombre…">
+      </div>
+      <button class="btn btn-primary-solid" id="newPatientBtn"><i class="bi bi-plus-lg me-1"></i> Nuevo paciente</button>
+    </div>
+
+    <div id="patientsContainer"></div>
+  </div>
+</div>
+
+<!-- Modal Crear / Editar paciente -->
+<div class="modal fade" id="patientModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="patientModalTitle">Nuevo paciente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="patientForm">
+        <div class="modal-body">
+          <input type="hidden" id="patientId">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="pName">Nombre completo</label>
+              <input type="text" class="form-control" id="pName" required minlength="3" maxlength="100">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="pDoc">Documento</label>
+              <input type="text" class="form-control" id="pDoc" required pattern="\d{3,}" title="Solo números, mínimo 3 dígitos">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="pPhone">Teléfono</label>
+              <input type="text" class="form-control" id="pPhone" required pattern="\d{7,20}" title="Solo números, entre 7 y 20 dígitos">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="pEmail">Correo</label>
+              <input type="email" class="form-control" id="pEmail" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Fecha de nacimiento</label>
+              <div class="date-select-group" id="pBirthGroup"></div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="pNotes">Notas (alergias, observaciones)</label>
+              <textarea class="form-control" id="pNotes" rows="3" maxlength="500"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary-solid" id="patientSaveBtn">Guardar paciente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmar inactivar -->
+<div class="modal fade" id="inactivateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Inactivar paciente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Seguro que quieres inactivar a <strong id="inactivateName"></strong>? Su historial de citas y pagos se conserva, pero no podrás agendarle nuevas citas.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary-solid" style="background:var(--status-cancelled)" id="confirmInactivateBtn">Sí, inactivar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js?v=3"></script>
+<script src="js/ui.js?v=3"></script>
+<script src="js/pacientes.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DentalCore · Pagos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <aside id="sidebar"></aside>
+  <div class="main-col">
+    <header id="topbar"></header>
+
+    <div class="section-block">
+      <div class="section-title">Buscar paciente</div>
+      <div class="search-input-wrap" style="max-width:420px;">
+        <i class="bi bi-search"></i>
+        <input type="text" id="searchInput" placeholder="Buscar por nombre… (o elige uno de la lista)">
+      </div>
+      <div id="searchResults" class="mt-2"></div>
+    </div>
+
+    <div id="paymentsPanel" style="display:none;">
+      <div class="stat-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px,1fr));">
+        <div class="card-surface stat-tile">
+          <div class="stat-label">Paciente</div>
+          <div class="stat-value" id="panelPatientName" style="font-size:19px;">—</div>
+        </div>
+        <div class="card-surface stat-tile">
+          <div class="stat-label">Saldo total pendiente</div>
+          <div class="stat-value accent" id="panelPendingBalance">$0</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">Historial de pagos</div>
+        <div id="paymentsHistory"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal registrar abono -->
+<div class="modal fade" id="amountModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar abono</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form id="amountForm">
+        <div class="modal-body">
+          <p class="cell-muted mb-3">Saldo pendiente de este pago: <strong id="amountCurrentBalance"></strong></p>
+          <label class="form-label" for="amountInput">Valor del abono</label>
+          <input type="number" class="form-control" id="amountInput" required min="0.01" step="0.01">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary-solid" id="amountSaveBtn">Registrar abono</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js?v=3"></script>
+<script src="js/ui.js?v=3"></script>
+<script src="js/pagos.js?v=3"></script>
+</body>
+</html>
