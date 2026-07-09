@@ -17,7 +17,7 @@ function renderShell(activeKey, pageTitle) {
   sidebar.innerHTML = `
     <div class="brand">
       <span class="brand-mark"><i class="bi bi-heart-pulse-fill"></i></span>
-      <span class="brand-text">DentalCore</span>
+      <span class="brand-text">Los Cardonas</span>
     </div>
     <nav class="side-nav">
       ${NAV_ITEMS.map(item => `
