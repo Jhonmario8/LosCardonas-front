@@ -8,7 +8,37 @@ const STATUS_DOT_COLOR = {
   CANCELLED: "var(--status-cancelled)",
 };
 
-const PERIOD_LABELS = { WEEKLY: "esta semana", MONTHLY: "este mes", YEARLY: "este año" };
+function mondayOf(d) {
+  const day = (d.getDay() + 6) % 7; // 0 = lunes
+  const m = new Date(d);
+  m.setDate(d.getDate() - day);
+  m.setHours(0, 0, 0, 0);
+  return m;
+}
+
+function buildEarningsCaption(period, refDate) {
+  const now = new Date();
+
+  if (period === "WEEKLY") {
+    const isCurrent = mondayOf(refDate).getTime() === mondayOf(now).getTime();
+    return isCurrent ? "Recaudado esta semana" : "Recaudado la semana seleccionada";
+  }
+
+  if (period === "MONTHLY") {
+    const isCurrent = refDate.getMonth() === now.getMonth() && refDate.getFullYear() === now.getFullYear();
+    if (isCurrent) return "Recaudado este mes";
+    const monthName = MONTHS_ES[refDate.getMonth()].toLowerCase();
+    const sameYear = refDate.getFullYear() === now.getFullYear();
+    return sameYear ? `Recaudado en ${monthName}` : `Recaudado en ${monthName} de ${refDate.getFullYear()}`;
+  }
+
+  if (period === "YEARLY") {
+    const isCurrent = refDate.getFullYear() === now.getFullYear();
+    return isCurrent ? "Recaudado este año" : `Recaudado en el año ${refDate.getFullYear()}`;
+  }
+
+  return "Recaudado";
+}
 
 let currentPeriod = "WEEKLY";
 let referenceDate = new Date(); // ancla usada para calcular a qué semana/mes/año navegar
@@ -53,13 +83,39 @@ yearSelect.addEventListener("change", () => {
   loadEarnings();
 });
 
+// ---- Selector de Año (solo se usa cuando el periodo es YEARLY) ----
+const yearOnlySelect = document.getElementById("earningsYearOnlySelect");
+
+function populateYearOnlyPicker() {
+  const nowYear = new Date().getFullYear();
+  const years = [];
+  for (let y = nowYear + 1; y >= nowYear - 10; y--) years.push(y);
+  yearOnlySelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+}
+populateYearOnlyPicker();
+
+function syncYearOnlyPicker() {
+  yearOnlySelect.value = String(referenceDate.getFullYear());
+}
+
+yearOnlySelect.addEventListener("change", () => {
+  referenceDate = new Date(Number(yearOnlySelect.value), 0, 1);
+  loadEarnings();
+});
+
 function updateEarningsNavMode() {
   const isMonthly = currentPeriod === "MONTHLY";
+  const isYearly = currentPeriod === "YEARLY";
+  const isWeekly = currentPeriod === "WEEKLY";
+
   document.getElementById("earningsMonthPicker").style.display = isMonthly ? "flex" : "none";
-  document.getElementById("earningsRange").style.display = isMonthly ? "none" : "inline";
-  document.getElementById("earningsPrevBtn").style.display = isMonthly ? "none" : "inline-flex";
-  document.getElementById("earningsNextBtn").style.display = isMonthly ? "none" : "inline-flex";
+  document.getElementById("earningsYearOnlyPicker").style.display = isYearly ? "flex" : "none";
+  document.getElementById("earningsRange").style.display = isWeekly ? "inline" : "none";
+  document.getElementById("earningsPrevBtn").style.display = isWeekly ? "inline-flex" : "none";
+  document.getElementById("earningsNextBtn").style.display = isWeekly ? "inline-flex" : "none";
+
   if (isMonthly) syncMonthYearPicker();
+  if (isYearly) syncYearOnlyPicker();
 }
 
 async function loadEarnings() {
@@ -71,7 +127,7 @@ async function loadEarnings() {
     const earnings = await Api.getEarnings(currentPeriod, referenceDateISO());
     totalEl.textContent = formatCOP(earnings.totalCollected);
     rangeEl.textContent = `${formatDateDisplay(earnings.startDate)} – ${formatDateDisplay(earnings.endDate)}`;
-    captionEl.textContent = `Recaudado ${PERIOD_LABELS[currentPeriod]}`;
+    captionEl.textContent = buildEarningsCaption(currentPeriod, referenceDate);
   } catch (err) {
     totalEl.textContent = "—";
     captionEl.textContent = "No se pudo cargar";
@@ -102,6 +158,7 @@ document.getElementById("earningsNextBtn").addEventListener("click", () => {
 document.getElementById("earningsTodayBtn").addEventListener("click", () => {
   referenceDate = new Date();
   if (currentPeriod === "MONTHLY") syncMonthYearPicker();
+  if (currentPeriod === "YEARLY") syncYearOnlyPicker();
   loadEarnings();
 });
 

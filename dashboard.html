@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="css/styles.css?v=6">
+<link rel="stylesheet" href="css/styles.css?v=8">
 </head>
 <body>
 
@@ -53,6 +53,9 @@
               <select class="form-select" id="earningsMonthSelect"></select>
               <select class="form-select" id="earningsYearSelect"></select>
             </div>
+            <div class="earnings-month-picker" id="earningsYearOnlyPicker" style="display:none;">
+              <select class="form-select" id="earningsYearOnlySelect"></select>
+            </div>
             <button class="icon-btn" id="earningsNextBtn" title="Periodo siguiente"><i class="bi bi-chevron-right"></i></button>
             <button class="btn-ghost" id="earningsTodayBtn">Actual</button>
           </div>
@@ -75,8 +78,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-<script src="js/api.js?v=6"></script>
-<script src="js/ui.js?v=6"></script>
-<script src="js/dashboard.js?v=6"></script>
+<script src="js/api.js?v=8"></script>
+<script src="js/ui.js?v=8"></script>
+<script src="js/dashboard.js?v=8"></script>
 </body>
 </html>
