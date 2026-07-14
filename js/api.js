@@ -160,8 +160,8 @@ async function apiRequest(path, { method = "GET", body = null, query = null, aut
 
 const Api = {
   // ---- Auth ----
-  login: (email, password) =>
-    apiRequest("/users/login", { method: "POST", body: { email, password }, auth: false, context: "login" }),
+  login: (username, password) =>
+    apiRequest("/users/login", { method: "POST", body: { username, password }, auth: false, context: "login" }),
 
   // ---- Pacientes ----
   getPatients: (name) => apiRequest("/patients", { query: { name }, context: "patients" }),

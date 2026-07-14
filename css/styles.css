@@ -411,6 +411,24 @@ button { font-family: var(--font-body); }
   min-width: 150px;
   text-align: center;
 }
+.earnings-month-picker {
+  display: flex;
+  gap: 6px;
+}
+.earnings-month-picker select {
+  padding: 7px 10px;
+  font-size: 13px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+}
+.earnings-month-picker select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
 .earnings-body {
   display: flex;
   align-items: baseline;

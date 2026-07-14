@@ -26,6 +26,42 @@ function referenceDateISO() {
   return `${referenceDate.getFullYear()}-${pad(referenceDate.getMonth() + 1)}-${pad(referenceDate.getDate())}`;
 }
 
+// ---- Selector de Mes / Año (solo se usa cuando el periodo es MONTHLY) ----
+const monthSelect = document.getElementById("earningsMonthSelect");
+const yearSelect = document.getElementById("earningsYearSelect");
+
+function populateMonthYearPicker() {
+  monthSelect.innerHTML = MONTHS_ES.map((m, i) => `<option value="${i + 1}">${m}</option>`).join("");
+  const nowYear = new Date().getFullYear();
+  const years = [];
+  for (let y = nowYear + 1; y >= nowYear - 5; y--) years.push(y);
+  yearSelect.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join("");
+}
+populateMonthYearPicker();
+
+function syncMonthYearPicker() {
+  monthSelect.value = String(referenceDate.getMonth() + 1);
+  yearSelect.value = String(referenceDate.getFullYear());
+}
+
+monthSelect.addEventListener("change", () => {
+  referenceDate = new Date(Number(yearSelect.value), Number(monthSelect.value) - 1, 1);
+  loadEarnings();
+});
+yearSelect.addEventListener("change", () => {
+  referenceDate = new Date(Number(yearSelect.value), Number(monthSelect.value) - 1, 1);
+  loadEarnings();
+});
+
+function updateEarningsNavMode() {
+  const isMonthly = currentPeriod === "MONTHLY";
+  document.getElementById("earningsMonthPicker").style.display = isMonthly ? "flex" : "none";
+  document.getElementById("earningsRange").style.display = isMonthly ? "none" : "inline";
+  document.getElementById("earningsPrevBtn").style.display = isMonthly ? "none" : "inline-flex";
+  document.getElementById("earningsNextBtn").style.display = isMonthly ? "none" : "inline-flex";
+  if (isMonthly) syncMonthYearPicker();
+}
+
 async function loadEarnings() {
   const totalEl = document.getElementById("earningsTotal");
   const captionEl = document.getElementById("earningsCaption");
@@ -50,6 +86,7 @@ document.querySelectorAll("#periodToggle button").forEach(btn => {
     btn.classList.add("active");
     currentPeriod = btn.dataset.period;
     referenceDate = new Date();
+    updateEarningsNavMode();
     loadEarnings();
   });
 });
@@ -64,6 +101,7 @@ document.getElementById("earningsNextBtn").addEventListener("click", () => {
 });
 document.getElementById("earningsTodayBtn").addEventListener("click", () => {
   referenceDate = new Date();
+  if (currentPeriod === "MONTHLY") syncMonthYearPicker();
   loadEarnings();
 });
 
@@ -134,5 +172,6 @@ function renderQuickAgenda(appointments, patientMap) {
     </div>`;
 }
 
+updateEarningsNavMode();
 loadDashboard();
 loadEarnings();
