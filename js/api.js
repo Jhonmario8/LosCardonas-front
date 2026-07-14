@@ -44,7 +44,7 @@ const STATUS_FALLBACK = {
 
 const CONTEXT_MESSAGES = {
   login: {
-    400: "Credenciales incorrectas. Verifica tu correo y contraseña.",
+    400: "Ingresa tu correo y contraseña.",
     401: "Credenciales incorrectas. Verifica tu correo y contraseña.",
   },
   patients: {
@@ -91,6 +91,9 @@ const CONTEXT_MESSAGES = {
   },
   dashboard: {
     500: "No se pudo generar el resumen del día.",
+  },
+  earnings: {
+    400: "El periodo o la fecha no son válidos.",
   },
 };
 
@@ -157,8 +160,8 @@ async function apiRequest(path, { method = "GET", body = null, query = null, aut
 
 const Api = {
   // ---- Auth ----
-  login: (username, password) =>
-    apiRequest("/users/login", { method: "POST", body: { username, password }, auth: false, context: "login" }),
+  login: (email, password) =>
+    apiRequest("/users/login", { method: "POST", body: { email, password }, auth: false, context: "login" }),
 
   // ---- Pacientes ----
   getPatients: (name) => apiRequest("/patients", { query: { name }, context: "patients" }),
@@ -180,4 +183,5 @@ const Api = {
 
   // ---- Dashboard ----
   getDashboardSummary: () => apiRequest("/dashboard/summary", { context: "dashboard" }),
+  getEarnings: (period, date) => apiRequest("/dashboard/earnings", { query: { period, date }, context: "earnings" }),
 };

@@ -8,6 +8,65 @@ const STATUS_DOT_COLOR = {
   CANCELLED: "var(--status-cancelled)",
 };
 
+const PERIOD_LABELS = { WEEKLY: "esta semana", MONTHLY: "este mes", YEARLY: "este año" };
+
+let currentPeriod = "WEEKLY";
+let referenceDate = new Date(); // ancla usada para calcular a qué semana/mes/año navegar
+
+function shiftReferenceDate(period, direction) {
+  const d = new Date(referenceDate);
+  if (period === "WEEKLY") d.setDate(d.getDate() + 7 * direction);
+  else if (period === "MONTHLY") d.setMonth(d.getMonth() + direction);
+  else if (period === "YEARLY") d.setFullYear(d.getFullYear() + direction);
+  referenceDate = d;
+}
+
+function referenceDateISO() {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${referenceDate.getFullYear()}-${pad(referenceDate.getMonth() + 1)}-${pad(referenceDate.getDate())}`;
+}
+
+async function loadEarnings() {
+  const totalEl = document.getElementById("earningsTotal");
+  const captionEl = document.getElementById("earningsCaption");
+  const rangeEl = document.getElementById("earningsRange");
+  captionEl.textContent = "Cargando…";
+  try {
+    const earnings = await Api.getEarnings(currentPeriod, referenceDateISO());
+    totalEl.textContent = formatCOP(earnings.totalCollected);
+    rangeEl.textContent = `${formatDateDisplay(earnings.startDate)} – ${formatDateDisplay(earnings.endDate)}`;
+    captionEl.textContent = `Recaudado ${PERIOD_LABELS[currentPeriod]}`;
+  } catch (err) {
+    totalEl.textContent = "—";
+    captionEl.textContent = "No se pudo cargar";
+    rangeEl.textContent = "—";
+    showToast(err.message || "No se pudo cargar el reporte de ganancias", "error");
+  }
+}
+
+document.querySelectorAll("#periodToggle button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#periodToggle button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentPeriod = btn.dataset.period;
+    referenceDate = new Date();
+    loadEarnings();
+  });
+});
+
+document.getElementById("earningsPrevBtn").addEventListener("click", () => {
+  shiftReferenceDate(currentPeriod, -1);
+  loadEarnings();
+});
+document.getElementById("earningsNextBtn").addEventListener("click", () => {
+  shiftReferenceDate(currentPeriod, 1);
+  loadEarnings();
+});
+document.getElementById("earningsTodayBtn").addEventListener("click", () => {
+  referenceDate = new Date();
+  loadEarnings();
+});
+
 async function loadDashboard() {
   try {
     const [summary, appointments, patients] = await Promise.all([
@@ -76,3 +135,4 @@ function renderQuickAgenda(appointments, patientMap) {
 }
 
 loadDashboard();
+loadEarnings();
