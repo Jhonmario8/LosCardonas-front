@@ -2,7 +2,7 @@
 
 Interfaz web del sistema de gestión del consultorio odontológico Los Cardonas. Consume la API REST de **[DentalCore](https://github.com/Jhonmario8/DentalCore)**.
 
-> **Sistema en uso real.** Esta interfaz la usa hoy un consultorio con pacientes reales. Por eso **no hay demo pública, cuenta de prueba ni credenciales** en este repositorio. Este README no contiene datos reales, y cualquier captura que se agregue debe tomarse con datos ficticios.
+> **Privacidad de datos.** Esta interfaz se construyó para el consultorio de una familiar, que aún no abre operación. Por eso **no hay demo pública, cuenta de prueba ni credenciales** en este repositorio. Este README no contiene datos reales, y cualquier captura que se agregue debe tomarse con datos ficticios.
 
 ## Páginas
 
